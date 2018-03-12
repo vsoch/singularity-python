@@ -189,13 +189,16 @@ class Singularity:
         return extracted_file
         
 
-    def execute(self,image_path,command,writable=False,contain=False):
+    def execute(self,image_path,command,writable=False,contain=False,bind=""):
         '''execute: send a command to a container
         :param image_path: full path to singularity image
         :param command: command to send to container
         :param writable: This option makes the file system accessible as read/write
         :param contain: This option disables the automatic sharing of writable
                         filesystems on your host
+        :param bind: full path to bind paths
+                        This option allows you to map directories on your host system to
+                        directories within your container using bind mounts
         '''
         sudo = False    
         if self.debug == True:
@@ -205,7 +208,8 @@ class Singularity:
 
         cmd = self.add_flags(cmd,
                              writable=writable,
-                             contain=contain)
+                             contain=contain,
+                             bind=bind)
 
         if writable is True:
             sudo = True
@@ -327,7 +331,7 @@ class Singularity:
         return final_image
 
 
-    def run(self,image_path,args=None,writable=False,contain=False):
+    def run(self,image_path,args=None,writable=False,contain=False,bind=""):
         '''run will run the container, with or withour arguments (which
         should be provided in a list)
         :param image_path: full path to singularity image
@@ -335,7 +339,7 @@ class Singularity:
         '''
         sudo = False
         cmd = ["singularity",'--quiet',"run"]
-        cmd = self.add_flags(cmd,writable=writable,contain=contain)
+        cmd = self.add_flags(cmd,writable=writable,contain=contain,bind=bind)
         cmd = cmd + [image_path]
 
         # Conditions for needing sudo
@@ -390,7 +394,7 @@ class Singularity:
         return args
 
 
-    def add_flags(self,cmd,writable=False,contain=False):
+    def add_flags(self,cmd,writable=False,contain=False,bind=""):
         '''check_args is a general function for adding flags to a command list
         :param writable: adds --writable
         :param contain: adds --contain
@@ -400,5 +404,8 @@ class Singularity:
 
         if contain == True:
             cmd.append('--contain')       
+
+        if bind != "":
+            cmd.extend(["--bind", bind])
 
         return cmd
