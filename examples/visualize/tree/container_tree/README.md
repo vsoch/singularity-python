@@ -6,7 +6,7 @@ The functions under analysis will help you show the contents of an image (folder
 
 This will open up something that looks like this:
 
-![../../img/files.png](../../img/files.png)
+![container tree](/img/files.png)
 
 An [interactive demo](https://singularityware.github.io/singularity-python/examples/container_tree) is also available.
 
